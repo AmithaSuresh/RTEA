@@ -306,7 +306,13 @@ $timezone=date_default_timezone_set('Asia/Kolkata');
                             
                                 <?php
                                include('../../BackEnd/php/connection.php');
-                               $query=mysqli_query($con,"SELECT * from `user_cart` where `onlineID`='$userId' ");
+                               //echo $userId;
+                               $query1=mysqli_query($con,"SELECT * from `user_online` where `userID`='$userId' and `shopID`='$ShopId'");
+                               while($row=mysqli_fetch_array($query1))
+                                                                  {
+                                                                    $onlineid=$row[1];
+                                                                  }   
+                               $query=mysqli_query($con,"SELECT * from `user_cart` where `onlineID`='$onlineid' ");
                                while($row=mysqli_fetch_array($query))
                                {
                                    $productid=$row[2];
@@ -321,7 +327,7 @@ $timezone=date_default_timezone_set('Asia/Kolkata');
                                    
                                    echo '<tr>
                                   
-                                   <td class="cart-pic first-row"><img style="height:80px ; width:50px;" src="img/ProductImages/'.$productid.'.jpg" alt=""></td>
+                                   <td class="cart-pic first-row"><img style="height:80px ; width:50px;" src="../../Images/productImages/'.$productid.'.jpg" alt=""></td>
                                    <td class="cart-title first-row">
                                        <h5 name="name">'.$prodname.'</h5>
                                    </td>
@@ -431,7 +437,7 @@ $timezone=date_default_timezone_set('Asia/Kolkata');
                                     <li class="subtotal">Subtotal <span>$240.00</span></li>
                                     <li class="cart-total">Total <span>$240.00</span></li>
                                 </ul> -->
-                                <a href="#" class="proceed-btn">PROCEED TO CHECK OUT</a>
+                                <a href="checkout.php" class="proceed-btn">PROCEED TO CHECK OUT</a>
                             </div>
                         </div>
                     </div>

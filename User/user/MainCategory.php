@@ -14,8 +14,8 @@ while ($row = mysqli_fetch_array($Userinfo)){
  }
 
 // $loc=$_POST['loc'];
- $location=$_POST['location'];//shop name 
- $_SESSION['location']=$location;
+ $location=$_SESSION['shopeName'];//shop name 
+//  $_SESSION['location']=$location;
  
  $query = mysqli_query($con, "SELECT * FROM `shop_info` where `Location` = '$place' and `ShopName`='$location'  ");
                             
@@ -134,13 +134,58 @@ $ShopName=$row[2];
                             </li>
                             <li class="cart-icon"><a href="#">
                                     <i class="icon_bag_alt"></i>
-                                    <span>3</span>
+                                    <?php
+                                    $query=mysqli_query($con,"SELECT count(`listid`) from `user_tobuylist` where `UserID`='$UserId'");
+                                    while($row=mysqli_fetch_array($query))
+                                    {
+                                        $num = $row[0];
+                                        echo ' <span>'.$num.'</span>';
+                                     }
+                                    ?>
+                                    <!-- <span>3</span> -->
                                 </a>
                                 <div class="cart-hover">
                                     <div class="select-items">
+
                                         <table>
                                             <tbody>
-                                                <tr>
+                                            <?php
+                               include('../../BackEnd/php/connection.php');
+                               $filename = basename($_SERVER['REQUEST_URI']);
+                               #$pagename =substr($filename,15);
+                               $pagename =$filename;
+                               //echo $pagename;
+                               //echo $userId;
+                                  
+                               $query=mysqli_query($con,"SELECT * from `user_tobuylist` where `userID`='$UserId' order by `listid` DESC limit 2");
+                               while($row=mysqli_fetch_array($query))
+                               {
+                                   $productid=$row[1];
+                                   $price=$row[2];
+                                   $quantity=$row[3];
+                                   $check=mysqli_query($con,"SELECT * from `shop_products` where `Product_ID`='$productid'");
+                                   while($row1=mysqli_fetch_array($check))
+                                   {
+                                     $prodname=$row1[1];
+                                     $priceperone= $row1[2];
+                                     echo '
+                                     <tr>
+                                                    <td class="si-pic"><img style="height:80px ; width:60px;"  src="../../Images/productImages/'.$productid.'.jpg" alt=""></td>
+                                                    <td class="si-text">
+                                                        <div class="product-selected">
+                                                            <p>₹'.$priceperone.' x '.$quantity.'</p>
+                                                            <h6>'.$prodname.'</h6>
+                                                        </div>
+                                                    </td>
+                                                    <td class="si-close">
+                                                    <a class="ti-close" href="process/tobyproDelete.php?'.$pagename.','.$productid.'"></a>
+                                                </td>
+                                                    </tr>';
+                                    }
+                                }
+                           
+                                   ?>
+                                                <!-- <tr>
                                                     <td class="si-pic"><img src="img/select-product-1.jpg" alt=""></td>
                                                     <td class="si-text">
                                                         <div class="product-selected">
@@ -163,21 +208,30 @@ $ShopName=$row[2];
                                                     <td class="si-close">
                                                         <i class="ti-close"></i>
                                                     </td>
-                                                </tr>
+                                                </tr> -->
                                             </tbody>
                                         </table>
                                     </div>
-                                    <div class="select-total">
+                                    <!-- <div class="select-total">
                                         <span>total:</span>
                                         <h5>$120.00</h5>
-                                    </div>
+                                    </div> -->
                                     <div class="select-button">
-                                        <a href="#" class="primary-btn view-card">VIEW CART</a>
-                                        <a href="tobuy.php" class="primary-btn checkout-btn">CHECK OUT</a>
+                                        <a href="tobuy.php" class="primary-btn view-card">click here to see list</a>
+                                    
                                     </div>
                                 </div>
                             </li>
-                            <li class="cart-price">$150.00</li>
+                            <?php
+          include('../../BackEnd/php/connection.php');
+        $query=mysqli_query($con,"SELECT SUM(`price`) from `user_tobuylist` where `UserID`='$UserId' ");
+       while($row=mysqli_fetch_array($query))
+       { $total=$row[0];}
+
+       echo '<li class="cart-price">₹'.$total.'</li>';
+
+                                 ?>
+                            <!-- <li class="cart-price">$150.00</li> -->
                         </ul>
                     </div>
                 </div>
@@ -201,7 +255,9 @@ $ShopName=$row[2];
                                 
 
                                 
-                            echo '<li name="category"><a href="ProductDis/categories.php?'.$row[1].'">'.$row[1].'</a></li>';
+                            echo '<li name="category"><a href="categories.php?'.$row[1].'">'.$row[1].'</a></li>
+            
+                            ';
                               
                             }
 
@@ -280,9 +336,9 @@ $ShopName=$row[2];
                                 
 
                                 
-                            echo '<div class="col-lg-4"><form method="POST" action="ProductDis/categories.php?'.$row[1].'">
+                            echo '<div class="col-lg-4"><form method="POST" action="categories.php?'.$row[1].'">
                             <div class="single-banner">
-                                <img src="../../Images/categoryimages/'.$row[0].'.jpg" alt="image not found 404">
+                                <img  style="height:300px ; width:400px;" src="../../Images/categoryimages/'.$row[0].'.jpg" alt="image not found 404">
                                 <div class="inner-text">
                                     <button>
                                     <h4>'.$row[1].'</h4></button>

@@ -6,6 +6,7 @@
  else{
 $place=$_SESSION['place'];//location
 $ShopName=$_SESSION['ShopName'];
+//echo $ShopName;
 
 $filename = basename($_SERVER['REQUEST_URI']);
 
@@ -20,7 +21,7 @@ $maincategory =substr($filename,15);
  }
 // $loc=$_POST['loc'];
  //$location=$_POST['location'];//shop name 
- $query = mysqli_query($con, "SELECT * FROM `shop_info` where `Location` = '$place' and `ShopName`='$ShopName'  ");
+ $query = mysqli_query($con, "SELECT * FROM `shop_info` where `Location` = '$place' and (`ShopID`='$ShopName' or `ShopName`='$ShopName')  ");
                             
 
 while($row = mysqli_fetch_array($query))
@@ -290,10 +291,12 @@ $ShopName=$row[2];
                 </div>
                 <nav class="nav-menu mobile-menu">
                     <ul>
-                        <li><a href="./index.html">Home</a></li>
+                        <?php 
+                        echo '<li><a href="MainCategory.php?'.$ShopName.'">Home</a></li>
                         <li><a href="./shop.html">Shop</a></li>
                         <li><a href="#">Collection</a>
-                            <ul class="dropdown">
+                            <ul class="dropdown">';
+                            ?>
                                 <li><a href="#">Men's</a></li>
                                 <li><a href="#">Women's</a></li>
                                 <li><a href="#">Kid's</a></li>
@@ -338,6 +341,20 @@ $ShopName=$row[2];
         <div class="container-fluid">
             <div class="row">
                  <?php
+                 echo $maincategory;
+                 $subInfo = mysqli_query($con,"SELECT * from  `shop_subcategories` WHERE `Categorie_ID`='$maincategory'");
+                 while($row=mysqli_fetch_array($subInfo))
+                 {
+                   $subID=$row[0];
+                   echo $subID;
+                   $SuperInfo = mysqli_query($con,"SELECT * from `shop_supersub` where `SuperSubCat_ID`='$subID'");
+                   while($row1=mysqli_fetch_array($SuperInfo))
+                   {
+                     $superID=$row[0];
+                     echo $superID;
+                   }
+                }
+
                            $query=mysqli_query($con,"SELECT * from Shop_Categories where `Categories`='$maincategory'");
                            while($row=mysqli_fetch_array($query))
                            {

@@ -9,7 +9,8 @@
    
 $place=$_SESSION['loc'];//location
 
-$ShopName=$_SESSION['ShopName'];
+$ShopName=$_SESSION['shopeName'];
+
  }
 include('../../BackEnd/php/connection.php');
 $check=mysqli_query($con, "SELECT * FROM `user_info` where `PhoneNumber`='$PhoneNumber'");
@@ -21,13 +22,13 @@ $userId =$row[0];
 // $loc=$_POST['loc'];
  //$location=$_POST['location'];//shop name 
 
- $query = mysqli_query($con, "SELECT * FROM `shop_info` where `Location` = '$place' and `ShopName`='$ShopName'  ");
+ $query = mysqli_query($con, "SELECT * FROM `shop_info` where `ShopID`='$ShopName' or `ShopName`='$ShopName'  ");
 
 while($row = mysqli_fetch_array($query))
 { 
 
 $ShopId =$row[0];
-//$ShopName=$row[2];
+$Shop1Name=$row[2];
 
 }
 $timezone=date_default_timezone_set('Asia/Kolkata');
@@ -96,8 +97,8 @@ $timezone=date_default_timezone_set('Asia/Kolkata');
                     <div class="phone-service">
                         <i class=" fa fa-phone"></i>
                         <?php
-                        echo $ShopName;
-                        $_SESSION['ShopName']=$ShopName;
+                        echo $Shop1Name;
+                      //  $_SESSION['ShopName']=$ShopName;
                         ?>
                     </div>
                 </div>

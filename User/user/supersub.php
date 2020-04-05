@@ -5,7 +5,8 @@
  }
  else{
 $place=$_SESSION['place'];//location
-$ShopName=$_SESSION['ShopName'];
+$ShopName=$_SESSION['shopeName'];
+
 //echo $ShopName;
 $filename = basename($_SERVER['REQUEST_URI']);
 
@@ -21,14 +22,13 @@ $subcategory =substr($filename,13);
  }
 // $loc=$_POST['loc'];
  //$location=$_POST['location'];//shop name 
- $query = mysqli_query($con, "SELECT * FROM `shop_info` where `Location` = '$place' and (`ShopID`='$ShopName' or `ShopName`='$ShopName')  ");
-                            
+ $query = mysqli_query($con, "SELECT * FROM `shop_info` where `ShopID`='$ShopName' or `ShopName`='$ShopName' ");
 
-while($row = mysqli_fetch_array($query))
+ while($row = mysqli_fetch_array($query))
 { 
 
 $ShopId =$row[0];
-$ShopName=$row[2];
+$Shop1Name=$row[2];
 
 }
 ?>
@@ -81,8 +81,8 @@ $ShopName=$row[2];
                     <div class="phone-service">
                         <i class=" fa fa-phone"></i>
                         <?php
-                        echo $ShopName;
-                        $_SESSION['ShopName']=$ShopName;
+                        echo $Shop1Name;
+                       // $_SESSION['ShopName']=$ShopName;
                         ?>
                     </div>
                 </div>
@@ -401,49 +401,40 @@ $ShopName=$row[2];
                  <div class="col-lg-8 offset-lg-1">
                     <div class="filter-control">
                         <ul>
-                            <li class="active">Clothings</li>
+                        <?php
+                          $catid=mysqli_query($con,"SELECT * from `Shop_supersub` where `SubCategorie_ID`='$subcategory'");
+                          while($row1=mysqli_fetch_array($catid))
+                          {
+                              $subid = $row1[0];
+                              $subcatname = $row1[2];
+                              echo '<li>'.$subcatname.'</li>';
+                          }
+                               ?>
+                            <!-- <li class="active">Clothings</li>
                             <li>HandBag</li>
                             <li>Shoes</li>
-                            <li>Accessories</li>
+                            <li>Accessories</li> -->
                         </ul>
                     </div>
                     <div class="product-slider owl-carousel">
                        
                     <?php
                                 include('../../BackEnd/php/connection.php');
-                                // has to complte
-                                // $Calcualation = mysqli_query($con,"SELECT * FROM `user_log` where `User_ID` =  '$UserId'");
-                                // while($row9=mysqli_fetch_array($Calcualation))
-                                // {
-                                //     $logId = $row9[0];
-                                //     $transationInfo = mysqli_query($con,"SELECT `ProductID` FROM `user_transactions` where `LogID`='$logId' order by `No of products` DESC");
-                                //     while($row8=mysqli_fetch_array($transationInfo))
-                                //     {
-                                //         $productID = $row8[0];
-                                //         echo $productID;
-                                       
-                                //     }
-
-                                // }
-
-                                $query = "SELECT * from `shop_link` where `Shop_ID`='$ShopId' group by `Product_ID`";
-                                $que=mysqli_query($con,$query);
-                                  
-                                  while($row=mysqli_fetch_array($que))
-                                {
-                                  $prodid=$row[1];
-                                  
-                            //   $check=mysqli_query($con,"SELECT * from `shop_products` where `Product_ID`='$prodid'");
-                            $check=mysqli_query($con,"SELECT `Product_ID`,`Name`,`Price`,`superSubID`  from `shop_products` where `Product_ID`='$prodid' group by `superSubID`  order by `superSubID` desc limit 1");
-                              while($row1=mysqli_fetch_array($check))
-                              {
-                                  $superID=$row1['superSubID'];
-                                  $price=$row1['Price'];
-                                  
-                                  $che=mysqli_query($con,"SELECT * from `shop_supersub` where `SuperSubCat_ID`='$superID'");
-                                  while($row2=mysqli_fetch_array($che))
-                              {
-                                  $name=$row2[2];
+                                
+                                $SuperInfo = mysqli_query($con,"SELECT * from `shop_supersub` where `SuperSubCat_ID`='$subcategory'");
+                                         while($row1=mysqli_fetch_array($SuperInfo))
+                                         {
+                                           $superID=$row1[0];
+                                           //echo $superID;
+                                           $check=mysqli_query($con,"SELECT *   from `shop_products` where `superSubID`= '$superID'");
+                                           while($row2=mysqli_fetch_array($check))
+                                             {
+                                                $prodid=$row2[0];
+                                                $price=$row2[2];
+                                                $name=$row2[1];
+                                                $check1 = mysqli_query($con,"SELECT * from `Shop_link` where `Product_ID`='$prodid' and `Shop_ID`='$ShopId' ");
+                                                while($result = mysqli_fetch_array($check1))
+                                                {
                                   
 
                     echo    '<div class="product-item">

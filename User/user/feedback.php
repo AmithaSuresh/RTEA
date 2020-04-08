@@ -110,7 +110,7 @@ $Shop1Name=$row[2];
                 </div>
             </div>
         </div>
-        <div class="container">
+        <div class="container" hidden>
             <div class="inner-header">
                 <div class="row">
                     <div class="col-lg-2 col-md-2">
@@ -234,26 +234,25 @@ $Shop1Name=$row[2];
                 <nav class="nav-menu mobile-menu">
                     <ul>
                     <?php 
-                        echo '<li><a href="MainCategory.php?'.$ShopName.'">Home</a></li>
-                        <li><a href="./shop.html">Shop</a></li>
-                        <li><a href="#">Collection</a>
-                            <ul class="dropdown">';
+                        echo '<li><a href="MainCategory.php?'.$ShopName.'">Home</a></li>'
+                      ;
                             ?>
+                               <li><a href="SelectShop.php">Shop</a></li>
+                        <li><a href="#">Collection</a>
+                            <ul class="dropdown">
                                 <li><a href="#">Men's</a></li>
                                 <li><a href="#">Women's</a></li>
                                 <li><a href="#">Kid's</a></li>
                             </ul>
                         </li>
-                        <li><a href="./blog.html">Blog</a></li>
-                        <li><a href="./contact.html">Contact</a></li>
+                        <li><a href="tobuy.php">List</a></li>
+                        <li><a href="feedback.php">FeedBack</a></li>
                         <li><a href="#">Pages</a>
                             <ul class="dropdown">
-                                <li><a href="./blog-details.html">Blog Details</a></li>
-                                <li><a href="./shopping-cart.html">Shopping Cart</a></li>
-                                <li><a href="./check-out.html">Checkout</a></li>
-                                <li><a href="./faq.html">Faq</a></li>
-                                <li><a href="./register.html">Register</a></li>
-                                <li><a href="./login.html">Login</a></li>
+                                <li><a href="MainCategory.php">Home</a></li>
+                                <li><a href="SelectShop.php">Shop</a></li>
+                                <li><a href="tobuy.php">List</a></li>
+                                <li><a href="feedback.php">FeedBack</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -322,19 +321,19 @@ $Shop1Name=$row[2];
                         <div class="leave-comment">
                             <h4>Leave A Comment</h4>
                             <p>Our staff will call back later and answer your questions.</p>
-                            <form action="#" class="comment-form">
+                            <form action="" class="comment-form" method='POST'>
                                 <div class="row">
                                     <?php
                                    echo '<div class="col-lg-6">
-                                        <input type="text" placeholder="'.$userName.'">
+                                        <input type="text" value="'.$userName.'">
                                     </div>
                                     <div class="col-lg-6">
-                                        <input type="text" placeholder="'.$userEmail.'">
+                                        <input type="text" value="'.$userEmail.'">
                                     </div>';
                                     ?>
                                     <div class="col-lg-12">
-                                        <textarea placeholder="Your message"></textarea>
-                                        <button type="submit" class="site-btn">Send message</button>
+                                        <textarea placeholder="Your message" name="msg"></textarea>
+                                        <button type="submit" name="submit" class="site-btn">Send message</button>
                                     </div>
                                 </div>
                             </form>
@@ -344,10 +343,22 @@ $Shop1Name=$row[2];
             </div>
         </div>
     </section>
+    <?php
+      if(isset($_POST['submit']))
+      {
+          $msg=$_POST['msg'];
+          echo $msg;
+          $feedback=mysqli_query($con,"INSERT INTO `User_Feedback`( `UserID`, `ShopID`, `Message`) VALUES ('$UserId','$ShopName','$msg')");
+          echo '<script> confirm("thanks for your feedback",window.location="selectshop.php")</script>';
+         
+      }
+
+?>
+
     <!-- Contact Section End -->
 
     <!-- Partner Logo Section Begin -->
-    <div class="partner-logo">
+    <div class="partner-logo" hidden>
         <div class="container">
             <div class="logo-carousel owl-carousel">
                 <div class="logo-item">
@@ -381,7 +392,7 @@ $Shop1Name=$row[2];
     <!-- Partner Logo Section End -->
 
     <!-- Footer Section Begin -->
-    <footer class="footer-section">
+    <footer class="footer-section" hidden>
         <div class="container">
             <div class="row">
                 <div class="col-lg-3">

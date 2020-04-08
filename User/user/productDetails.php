@@ -9,7 +9,7 @@ $ShopName=$_SESSION['shopeName'];
 
 $filename = basename($_SERVER['REQUEST_URI']);
 
-$suID =substr($filename,13);
+$pID =substr($filename,19);
 }
 
  $PhoneNumber=$_SESSION['PhoneNumber'];
@@ -17,6 +17,8 @@ $suID =substr($filename,13);
  $Userinfo = mysqli_query($con,"SELECT * FROM `user_info` where `PhoneNumber` = '$PhoneNumber'");
  while ($row = mysqli_fetch_array($Userinfo)){
      $UserId = $row[0];
+     $UserName = $row[1];
+     $userMail = $row[3];
  }
 // $loc=$_POST['loc'];
  //$location=$_POST['location'];//shop name 
@@ -31,6 +33,7 @@ $Shop1Name=$row[2];
 
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="zxx">
 
@@ -272,9 +275,9 @@ $Shop1Name=$row[2];
                                <li><a href="SelectShop.php">Shop</a></li>
                         <li><a href="#">Collection</a>
                             <ul class="dropdown">
-                                <li><a href="#">Men's</a></li>
-                                <li><a href="#">Women's</a></li>
-                                <li><a href="#">Kid's</a></li>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">shop</a></li>
+                            <li><a href="#">List</a></li>
                             </ul>
                         </li>
                         <li><a href="tobuy.php">List</a></li>
@@ -300,9 +303,10 @@ $Shop1Name=$row[2];
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
-                    <div class="breadcrumb-text">
-                        <a href="#"><i class="fa fa-home"></i> Home</a>
-                        <span>Shop</span>
+                    <div class="breadcrumb-text product-more">
+                        <a href="./home.html"><i class="fa fa-home"></i> Home</a>
+                        <a href="./shop.html">Shop</a>
+                        <span>Detail</span>
                     </div>
                 </div>
             </div>
@@ -311,19 +315,19 @@ $Shop1Name=$row[2];
     <!-- Breadcrumb Section Begin -->
 
     <!-- Product Shop Section Begin -->
-    <section class="product-shop spad" >
+    <section class="product-shop spad page-details">
         <div class="container">
             <div class="row">
-                <div class="col-lg-3 col-md-6 col-sm-8 order-2 order-lg-1 produts-sidebar-filter" hidden>
+                <div class="col-lg-3" >
                     <div class="filter-widget">
-                        <h4 class="fw-title">Categories</h4>
+                        <h4 class="fw-title">Deviate</h4>
                         <ul class="filter-catagories">
-                            <li><a href="#">Home</a></li>
+                        <li><a href="#">Home</a></li>
                             <li><a href="#">shop</a></li>
                             <li><a href="#">List</a></li>
                         </ul>
                     </div>
-                    <div class="filter-widget">
+                    <div class="filter-widget" hidden>
                         <h4 class="fw-title">Brand</h4>
                         <div class="fw-brand-check">
                             <div class="bc-item">
@@ -374,7 +378,7 @@ $Shop1Name=$row[2];
                         </div>
                         <a href="#" class="filter-btn">Filter</a>
                     </div>
-                    <div class="filter-widget">
+                    <div class="filter-widget" hidden>
                         <h4 class="fw-title">Color</h4>
                         <div class="fw-color-choose">
                             <div class="cs-item">
@@ -403,7 +407,7 @@ $Shop1Name=$row[2];
                             </div>
                         </div>
                     </div>
-                    <div class="filter-widget">
+                    <div class="filter-widget" hidden>
                         <h4 class="fw-title">Size</h4>
                         <div class="fw-size-choose">
                             <div class="sc-item">
@@ -437,425 +441,430 @@ $Shop1Name=$row[2];
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-9 order-1 order-lg-2">
-                    <div class="product-show-option">
-                        <div class="row">
-                            <div class="col-lg-7 col-md-7">
-                                <div class="select-option">
-                                    <select class="sorting">
-                                        <option value="">Default Sorting</option>
-                                    </select>
-                                    <select class="p-show">
-                                        <option value="">Show:</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <?php
 
-                            ?>
-                            <div class="col-lg-5 col-md-5 text-right">
-                                <p>Show 01- 09 Of 36 Product</p>
+                <?php
+                //displaying products
+                
+                 $catid=mysqli_query($con,"SELECT * from `Shop_products` where `Product_ID`='$pID'");
+                 while($row1=mysqli_fetch_array($catid))
+                 {
+                     $productid = $row1[0];
+                     $pname = $row1[1];
+                     $pprice = $row1[2];
+                     $Dis =$row1[3];
+                     $subID = $row1[4];
+    
+                 }   
+                 //using product id -fetching super category details
+                     $SuperInfo = mysqli_query($con,"SELECT * from `shop_supersub` where `SuperSubCat_ID`='$subID'");
+                     while($row2=mysqli_fetch_array($SuperInfo))
+                     {
+
+                       $suuper=$row2[1];
+                       $superID=$row2[0];
+                       $superSubName = $row2[2];
+                       
+                     }  
+                    // using supercategory  id - fetching sub category details
+                        $subInfo = mysqli_query($con,"SELECT * from  `shop_subcategories` WHERE `SubCategorie_ID`='$suuper'");
+                                    while($row3=mysqli_fetch_array($subInfo))
+                                    {
+                                         $SubID1=$row3[1];
+                                         $SubName = $row3[2];
+                                         //echo $subID;
+                                    }  
+                                    //using subcategory id -fetching  category details 
+                                         $query=mysqli_query($con,"SELECT * from Shop_Categories where Categorie_ID='$SubID1'");
+                                         while($row4=mysqli_fetch_array($query))
+                                           {
+                                               $cataName=$row4[1];
+
+                                           }
+                                           //checking the availability of product in shop
+                                           $Pqun = 'Currently Unavailable';
+                                           $query = "SELECT * from `shop_link` where `Product_ID`='$pID' ";
+                                           $que=mysqli_query($con,$query);
+                                            while($row2=mysqli_fetch_array($que))
+                                             {   
+                                                 $Pqun=$row2[3];
+                                             }      
+                     $cutprice=$pprice+30;
+
+                   echo '
+                   
+                <div class="col-lg-9">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="product-pic-zoom">
+                            <img class="product-big-img" src="../../Images/ProductImages/'.$pID.'.jpg" alt="">
+                            <div class="zoom-icon">
+                                <i class="fa fa-search-plus"></i>
+                            </div>
+                        </div>
+                        <div class="product-thumbs">
+                            <div class="product-thumbs-track ps-slider owl-carousel" hidden>
+                                <div class="pt active" data-imgbigurl="../../Images/ProductImages/'.$pID.'.jpg"><img
+                                        src="../../Images/ProductImages/'.$pID.'.jpg" alt=""></div>
+                                <div class="pt" data-imgbigurl="../../Images/ProductImages/'.$pID.'.jpg"><img
+                                        src="img/product-single/product-2.jpg" alt=""></div>
+                                <div class="pt" data-imgbigurl="../../Images/ProductImages/'.$pID.'.jpg"><img
+                                        src="img/product-single/product-3.jpg" alt=""></div>
+                                <div class="pt" data-imgbigurl="../../Images/ProductImages/'.$pID.'.jpg"><img
+                                        src="img/product-single/product-3.jpg" alt=""></div>
                             </div>
                         </div>
                     </div>
-                    <div class="product-list">
-                        <div class="row">
-                        <?php
-                        
-                          
-                          $catid=mysqli_query($con,"SELECT * from `Shop_products` where `superSubID`='$suID'");
-                          while($row1=mysqli_fetch_array($catid))
-                          {
-                              $pid = $row1[0];
-                              $pname = $row1[1];
-                              $pprice = $row1[2];
-                              $Dis =$row1[3];
-                              $check = mysqli_query($con,"SELECT * from `Shop_link` where `Product_ID`='$pid' and `Shop_ID`='$ShopId' ");
-                              while($result = mysqli_fetch_array($check))
-                              {
-                              $quntity = $result[3];
-                              $location = $result[4];
-                              echo '<div class="col-lg-4 col-sm-6">
-                              <div class="product-item" onclick="view('.$pid.')">
-                                  <div class="pi-pic">
-                                      <img style="height:280px; width:200px" src="../../Images/ProductImages/'.$pid.'.jpg" alt="">
-                                      <div class="sale pp-sale">Available stock  :'.$quntity.'</div>
-                                      <div class="icon">
-                                          <i class="icon_heart_alt"></i>
-                                      </div>
-                                      <ul>
-                                      <li class="w-icon active"><a href="#"><i class="icon_bag_alt"></i></a></li>
-                                      <li class="quick-view"><a href="process/list.php?'.$pagename.','.$pid.'" name='.$pid.'>+ Add List</a></li>
-                                      <li class="w-icon"><a href="#"><i class="fa fa-random"></i></a></li>
-                                  </ul>
-                                  </div>
-                                  <div class="pi-text">
-                                      <div class="catagory-name">'.$Dis.'</div>
-                                      <a href="#">
-                                          <h5>'.$pname.'</h5>
-                                      </a>
-                                      <div class="product-price">
-                                      ₹'.$pprice.'
-                                         
-                                      </div>
-                                      <span>Location</span><br>
-                                      <span>'.$location.'</span>
-                                  </div>
-                              </div>
-                          </div>
-                          
-                              ';}
-                            }
-                        ?>
-                                  <script>
-                                  function view(proid){
-                                      
-                                     window.location="productDetails.php?"+proid;
+                    <div class="col-lg-6">
+                        <div class="product-details">
+                            <div class="pd-title">
+                                <span></span>
+                                <h3>'.$pname.'</h3>
+                                <a href="#" class="heart-icon"><i class="icon_heart_alt"></i></a>
+                            </div>
+                            <div class="pd-rating">
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star-o"></i>
+                                <span>(5)</span>
+                            </div>
+                            <div class="pd-desc">
+                                <p>'.$Dis.'</p>
+                                <h4>₹'.$pprice.' <span>₹'.$cutprice.'</span></h4>
+                            </div>
+                            <div class="pd-color" hidden>
+                                <h6>Color</h6>
+                                <div class="pd-color-choose">
+                                    <div class="cc-item">
+                                        <input type="radio" id="cc-black">
+                                        <label for="cc-black"></label>
+                                    </div>
+                                    <div class="cc-item">
+                                        <input type="radio" id="cc-yellow">
+                                        <label for="cc-yellow" class="cc-yellow"></label>
+                                    </div>
+                                    <div class="cc-item">
+                                        <input type="radio" id="cc-violet">
+                                        <label for="cc-violet" class="cc-violet"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pd-size-choose" hidden>
+                                <div class="sc-item">
+                                    <input type="radio" id="sm-size">
+                                    <label for="sm-size">s</label>
+                                </div>
+                                <div class="sc-item">
+                                    <input type="radio" id="md-size">
+                                    <label for="md-size">m</label>
+                                </div>
+                                <div class="sc-item">
+                                    <input type="radio" id="lg-size">
+                                    <label for="lg-size">l</label>
+                                </div>
+                                <div class="sc-item">
+                                    <input type="radio" id="xl-size">
+                                    <label for="xl-size">xs</label>
+                                </div>
+                            </div>
+                            <div class="quantity">
+                                <div class="pro-qty" hidden>
+                                    <input type="text" value="1">
+                                </div>';
+                                if($Pqun=='Currently Unavailable'){
+                                    echo '<a href="process/list.php?'.$filename.','.$pID.'" name='.$pID.'" class="primary-btn pd-cart" hidden>Add To Cart</a>';
                                 }
-                                  </script>  
-                            <!-- <div class="col-lg-4 col-sm-6">
-                                <div class="product-item">
-                                    <div class="pi-pic">
-                                        <img src="img/products/product-1.jpg" alt="">
-                                        <div class="sale pp-sale">Sale</div>
-                                        <div class="icon">
-                                            <i class="icon_heart_alt"></i>
+                                else{
+                               echo '<a href="process/list.php?'.$filename.','.$pID.'" name='.$pID.'" class="primary-btn pd-cart">Add To List</a>';}
+                            echo '</div>
+                            <ul class="pd-tags">
+                                <li><span>Super Sub </span>: '.$superSubName.'</li>
+                                <li><span>Sub Category</span>: '.$SubName.'</li>
+                                <li><span>CATEGORIES</span>: '.$cataName.'</li>
+                            </ul>
+                            <div class="pd-share">
+                                <div class="p-code">ID : '.$pID.'</div>
+                                <div class="pd-social">
+                                    <a href="#"><i class="ti-facebook"></i></a>
+                                    <a href="#"><i class="ti-twitter-alt"></i></a>
+                                    <a href="#"><i class="ti-linkedin"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                   ';
+
+                 
+
+?>
+   <div class="product-tab">
+                        <div class="tab-item">
+                            <ul class="nav" role="tablist">
+                                <li>
+                                    <a class="active" data-toggle="tab" href="#tab-1" role="tab">DESCRIPTION</a>
+                                </li>
+                                <li>
+                                    <a data-toggle="tab" href="#tab-2" role="tab">More Details</a>
+                                </li>
+                                <li>
+                                    <a data-toggle="tab" href="#tab-3" role="tab">Customer Reviews (02)</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="tab-item-content">
+                            <div class="tab-content">
+                                <div class="tab-pane fade-in active" id="tab-1" role="tabpanel">
+                                    <div class="product-content">
+                                        <div class="row">
+                                            <div class="col-lg-7">
+                                                <h5>Introduction</h5>
+                                                <?php
+                                                echo '
+                                                <p>'.$Dis.' </p>
+                                                <h5>Features</h5>
+                                                <p></p>
+                                                </div>
+                                            <div class="col-lg-5">
+                                                <img src="../../Images/ProductImages/'.$pID.'.jpg" alt="">
+                                            </div>
+                                                ';
+
+                                                ?>
+                                                
+                                            
                                         </div>
-                                        <ul>
-                                            <li class="w-icon active"><a href="#"><i class="icon_bag_alt"></i></a></li>
-                                            <li class="quick-view"><a href="#">+ Quick View</a></li>
-                                            <li class="w-icon"><a href="#"><i class="fa fa-random"></i></a></li>
-                                        </ul>
                                     </div>
-                                    <div class="pi-text">
-                                        <div class="catagory-name">Towel</div>
-                                        <a href="#">
-                                            <h5>Pure Pineapple</h5>
-                                        </a>
-                                        <div class="product-price">
-                                            $14.00
-                                            <span>$35.00</span>
+                                </div>
+                                <div class="tab-pane fade" id="tab-2" role="tabpanel">
+                                    <div class="specification-table">
+                                        <table>
+                                            <tr>
+                                                <td class="p-catagory">Customer Rating</td>
+                                                <td>
+                                                    <div class="pd-rating">
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star-o"></i>
+                                                        <span>(5)</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-catagory">Price</td>
+                                                <td>
+                                                   <?php echo'<div class="p-price">₹'.$pprice.'</div>';?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-catagory">Add To Cart</td>
+                                                <td>
+                                                    <div class="cart-add">+ add to cart</div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-catagory">Availability</td>
+                                                <td>
+                                                <?php echo'<div class="p-stock">'.$Pqun.'</div>';?>
+                                                    
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-catagory">Catagory</td>
+                                                <td>
+                                                    <?php echo'<div class="p-size">'.$cataName.'</div>';?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-catagory">Sub cata</td>
+                                                <td>
+                                                <?php echo'<div class="p-size">'.$SubName.'</div>';?>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="p-catagory">Super Sub</td>
+                                                <td>
+                                                    <?php echo'<div class="p-size">'.$superSubName.'</div>';?>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="tab-3" role="tabpanel">
+                                    <div class="customer-review-option">
+                                        <h4>2 Comments</h4>
+                                        <div class="comment-option">
+                                        <?php
+                                        $cutomer = mysqli_query($con,"SELECT * FROM `user_review` where ProductID='$pID' limit 2");
+                                        while($row=mysqli_fetch_array($cutomer)){
+
+                                            $view = $row[3];
+                                            $rate = $row[4]; 
+                                            $view_Uid = $row[2];
+                                            $userinfo=mysqli_query($con,"SELECT * FROM `user_info` where `UserId`='$view_Uid'");
+                                            while($row1=mysqli_fetch_array($userinfo)){
+
+                                                $name = $row1[1];
+                                                $phno = $row1[2];
+
+                                            echo '
+                                            <div class="co-item">
+                                            <div class="avatar-pic">
+                                                <img src="../../Images/UserImages/'.$phno.'.jpg" alt="">
+                                            </div>
+                                            <div class="avatar-text">
+                                                
+                                                <h5>'.$name.'<span></span></h5>
+                                                <div class="at-reply">'.$view.'</div>
+                                            </div>
+                                        </div>';
+                                        }
+                                    }
+
+                                        ?>
+                                        
+                                           
+                                        </div>
+                                       
+                                        <?php
+                                        //product review to user_review table
+                                        echo '<div class="leave-comment">
+                                            <h4>Leave A Comment</h4>
+                                            <form action="process/review.php" Method="POST" class="comment-form">
+                                                <div class="personal-rating">
+                                                <h6></h6>
+                                               
+                                            </div>
+                                                <div class="row">
+                                            
+                                                    <div class="col-lg-6">
+                                                        <input type="text" value="'.$UserName.'">
+                                                    </div>
+                                                    <div class="col-lg-6">
+                                                        <input type="text" placeholder="'.$userMail.'">
+                                                        <input type="text" name="product" value="'.$pID.'" hidden>
+                                                    </div>';
+                                                    ?>
+                                                    <div class="col-lg-12">
+                                                        <textarea placeholder="Messages" name="review"></textarea>
+                                                        <button type="submit" name="MSG" class="site-btn">Send message</button>
+                                                    </div>
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-4 col-sm-6">
-                                <div class="product-item">
-                                    <div class="pi-pic">
-                                        <img src="img/products/product-2.jpg" alt="">
-                                        <div class="icon">
-                                            <i class="icon_heart_alt"></i>
-                                        </div>
-                                        <ul>
-                                            <li class="w-icon active"><a href="#"><i class="icon_bag_alt"></i></a></li>
-                                            <li class="quick-view"><a href="#">+ Quick View</a></li>
-                                            <li class="w-icon"><a href="#"><i class="fa fa-random"></i></a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="pi-text">
-                                        <div class="catagory-name">Coat</div>
-                                        <a href="#">
-                                            <h5>Guangzhou sweater</h5>
-                                        </a>
-                                        <div class="product-price">
-                                            $13.00
-                                            <span>$35.00</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-sm-6">
-                                <div class="product-item">
-                                    <div class="pi-pic">
-                                        <img src="img/products/product-3.jpg" alt="">
-                                        <div class="icon">
-                                            <i class="icon_heart_alt"></i>
-                                        </div>
-                                        <ul>
-                                            <li class="w-icon active"><a href="#"><i class="icon_bag_alt"></i></a></li>
-                                            <li class="quick-view"><a href="#">+ Quick View</a></li>
-                                            <li class="w-icon"><a href="#"><i class="fa fa-random"></i></a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="pi-text">
-                                        <div class="catagory-name">Shoes</div>
-                                        <a href="#">
-                                            <h5>Guangzhou sweater</h5>
-                                        </a>
-                                        <div class="product-price">
-                                            $34.00
-                                            <span>$35.00</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-sm-6">
-                                <div class="product-item">
-                                    <div class="pi-pic">
-                                        <img src="img/products/product-4.jpg" alt="">
-                                        <div class="icon">
-                                            <i class="icon_heart_alt"></i>
-                                        </div>
-                                        <ul>
-                                            <li class="w-icon active"><a href="#"><i class="icon_bag_alt"></i></a></li>
-                                            <li class="quick-view"><a href="#">+ Quick View</a></li>
-                                            <li class="w-icon"><a href="#"><i class="fa fa-random"></i></a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="pi-text">
-                                        <div class="catagory-name">Coat</div>
-                                        <a href="#">
-                                            <h5>Microfiber Wool Scarf</h5>
-                                        </a>
-                                        <div class="product-price">
-                                            $64.00
-                                            <span>$35.00</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-sm-6">
-                                <div class="product-item">
-                                    <div class="pi-pic">
-                                        <img src="img/products/product-5.jpg" alt="">
-                                        <div class="icon">
-                                            <i class="icon_heart_alt"></i>
-                                        </div>
-                                        <ul>
-                                            <li class="w-icon active"><a href="#"><i class="icon_bag_alt"></i></a></li>
-                                            <li class="quick-view"><a href="#">+ Quick View</a></li>
-                                            <li class="w-icon"><a href="#"><i class="fa fa-random"></i></a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="pi-text">
-                                        <div class="catagory-name">Shoes</div>
-                                        <a href="#">
-                                            <h5>Men's Painted Hat</h5>
-                                        </a>
-                                        <div class="product-price">
-                                            $44.00
-                                            <span>$35.00</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-sm-6">
-                                <div class="product-item">
-                                    <div class="pi-pic">
-                                        <img src="img/products/product-6.jpg" alt="">
-                                        <div class="icon">
-                                            <i class="icon_heart_alt"></i>
-                                        </div>
-                                        <ul>
-                                            <li class="w-icon active"><a href="#"><i class="icon_bag_alt"></i></a></li>
-                                            <li class="quick-view"><a href="#">+ Quick View</a></li>
-                                            <li class="w-icon"><a href="#"><i class="fa fa-random"></i></a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="pi-text">
-                                        <div class="catagory-name">Shoes</div>
-                                        <a href="#">
-                                            <h5>Converse Shoes</h5>
-                                        </a>
-                                        <div class="product-price">
-                                            $34.00
-                                            <span>$35.00</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-sm-6">
-                                <div class="product-item">
-                                    <div class="pi-pic">
-                                        <img src="img/products/product-7.jpg" alt="">
-                                        <div class="sale pp-sale">Sale</div>
-                                        <div class="icon">
-                                            <i class="icon_heart_alt"></i>
-                                        </div>
-                                        <ul>
-                                            <li class="w-icon active"><a href="#"><i class="icon_bag_alt"></i></a></li>
-                                            <li class="quick-view"><a href="#">+ Quick View</a></li>
-                                            <li class="w-icon"><a href="#"><i class="fa fa-random"></i></a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="pi-text">
-                                        <div class="catagory-name">Towel</div>
-                                        <a href="#">
-                                            <h5>Pure Pineapple</h5>
-                                        </a>
-                                        <div class="product-price">
-                                            $64.00
-                                            <span>$35.00</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-sm-6">
-                                <div class="product-item">
-                                    <div class="pi-pic">
-                                        <img src="img/products/product-8.jpg" alt="">
-                                        <div class="icon">
-                                            <i class="icon_heart_alt"></i>
-                                        </div>
-                                        <ul>
-                                            <li class="w-icon active"><a href="#"><i class="icon_bag_alt"></i></a></li>
-                                            <li class="quick-view"><a href="#">+ Quick View</a></li>
-                                            <li class="w-icon"><a href="#"><i class="fa fa-random"></i></a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="pi-text">
-                                        <div class="catagory-name">Coat</div>
-                                        <a href="#">
-                                            <h5>2 Layer Windbreaker</h5>
-                                        </a>
-                                        <div class="product-price">
-                                            $44.00
-                                            <span>$35.00</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-sm-6">
-                                <div class="product-item">
-                                    <div class="pi-pic">
-                                        <img src="img/products/product-9.jpg" alt="">
-                                        <div class="icon">
-                                            <i class="icon_heart_alt"></i>
-                                        </div>
-                                        <ul>
-                                            <li class="w-icon active"><a href="#"><i class="icon_bag_alt"></i></a></li>
-                                            <li class="quick-view"><a href="#">+ Quick View</a></li>
-                                            <li class="w-icon"><a href="#"><i class="fa fa-random"></i></a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="pi-text">
-                                        <div class="catagory-name">Shoes</div>
-                                        <a href="#">
-                                            <h5>Converse Shoes</h5>
-                                        </a>
-                                        <div class="product-price">
-                                            $34.00
-                                            <span>$35.00</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>-->
-                    </div> 
-                    <div class="loading-more">
-                        <i class="icon_loading"></i>
-                        <a href="#">
-                            Loading More
-                        </a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+    <?php
+   
+    ?>
     <!-- Product Shop Section End -->
 
-    <!-- Partner Logo Section Begin -->
-    <div class="partner-logo">
+    <!-- Related Products Section End -->
+    <div class="related-products spad">
         <div class="container">
-            <div class="logo-carousel owl-carousel">
-                <div class="logo-item">
-                    <div class="tablecell-inner">
-                        <img src="img/logo-carousel/logo-1.png" alt="">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-title">
+                        <h2>Related Products</h2>
                     </div>
                 </div>
-                <div class="logo-item">
-                    <div class="tablecell-inner">
-                        <img src="img/logo-carousel/logo-2.png" alt="">
-                    </div>
+            </div>
+            <div class="row">
+
+<?php
+//displaying  products in supersub category
+
+
+$catid=mysqli_query($con,"SELECT * from `Shop_products` where `superSubID`='$superID' limit 4");
+while($row1=mysqli_fetch_array($catid))
+{
+    $productid = $row1[0];
+    $pname = $row1[1];
+     $pprice= $row1[2];
+    $Dis =$row1[3];
+    $subID = $row1[4]; 
+    if($pID != $productid){
+        echo '  <div class="col-lg-3 col-sm-6" onclick="view('.$productid.')">
+        <div class="product-item">
+            <div class="pi-pic">
+                <img style="height:280px; width:200px" src="../../Images/ProductImages/'.$productid.'.jpg" alt=""> 
+                <div class="sale">Sale</div>
+                <div class="icon">
+                    <i class="icon_heart_alt" ></i>
                 </div>
-                <div class="logo-item">
-                    <div class="tablecell-inner">
-                        <img src="img/logo-carousel/logo-3.png" alt="">
-                    </div>
+                <ul>
+                    <li class="w-icon active"><a href="#"><i class="icon_bag_alt"></i></a></li>
+                    <li class="quick-view"><a href="#">+ Quick View</a></li>
+                    <li class="w-icon"><a href="#"><i class="fa fa-random"></i></a></li>
+                </ul>
+            </div>
+            <div class="pi-text">
+                <div class="catagory-name">Coat</div>
+                <a href="#">
+                    <h5>'.$pname.'</h5>
+                </a>
+                <div class="product-price">
+                    '.$pprice.'
+                    <span>$35.00</span>
                 </div>
-                <div class="logo-item">
-                    <div class="tablecell-inner">
-                        <img src="img/logo-carousel/logo-4.png" alt="">
-                    </div>
-                </div>
-                <div class="logo-item">
-                    <div class="tablecell-inner">
-                        <img src="img/logo-carousel/logo-5.png" alt="">
+            </div>
+        </div>
+    </div>
+        ';
+    }
+    else {
+      
+    
+      # code...
+    }
+}   
+?>
+
+
+
+
+
+
+ <script>
+                                  function view(proid){
+                                      
+                                     window.location="productDetails.php?"+proid;
+                                }
+                                  </script>  
+
+
+               
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <!-- Related Products Section End -->
+
+    <!-- Partner Logo Section Begin -->
     <!-- Partner Logo Section End -->
 
     <!-- Footer Section Begin -->
-    <footer class="footer-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3">
-                    <div class="footer-left">
-                        <div class="footer-logo">
-                            <a href="#"><img src="img/footer-logo.png" alt=""></a>
-                        </div>
-                        <ul>
-                            <li>Address: 60-49 Road 11378 New York</li>
-                            <li>Phone: +65 11.188.888</li>
-                            <li>Email: hello.colorlib@gmail.com</li>
-                        </ul>
-                        <div class="footer-social">
-                            <a href="#"><i class="fa fa-facebook"></i></a>
-                            <a href="#"><i class="fa fa-instagram"></i></a>
-                            <a href="#"><i class="fa fa-twitter"></i></a>
-                            <a href="#"><i class="fa fa-pinterest"></i></a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-2 offset-lg-1">
-                    <div class="footer-widget">
-                        <h5>Information</h5>
-                        <ul>
-                            <li><a href="#">About Us</a></li>
-                            <li><a href="#">Checkout</a></li>
-                            <li><a href="#">Contact</a></li>
-                            <li><a href="#">Serivius</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-lg-2">
-                    <div class="footer-widget">
-                        <h5>My Account</h5>
-                        <ul>
-                            <li><a href="#">My Account</a></li>
-                            <li><a href="#">Contact</a></li>
-                            <li><a href="#">Shopping Cart</a></li>
-                            <li><a href="#">Shop</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="newslatter-item">
-                        <h5>Join Our Newsletter Now</h5>
-                        <p>Get E-mail updates about our latest shop and special offers.</p>
-                        <form action="#" class="subscribe-form">
-                            <input type="text" placeholder="Enter Your Mail">
-                            <button type="button">Subscribe</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+    
         <div class="copyright-reserved">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="copyright-text">
-                            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+                            <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -s 
 <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                         </div>
-                        <div class="payment-pic">
-                            <img src="img/payment-method.png" alt="">
-                        </div>
+                        
                     </div>
                 </div>
             </div>
